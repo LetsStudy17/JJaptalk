@@ -42,6 +42,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 	private JButton joinroom_button = new JButton("채 팅 방 참 여");
 	private JButton createroom_button = new JButton("방 만 들 기");
 	private JButton send_button = new JButton("전 송");
+	private JButton out_button = new JButton("퇴 장");
 	
 	
 	private JList User_list = new JList();	//전체 접속자 list
@@ -50,7 +51,6 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 	private JTextArea Chat_area = new JTextArea();	//채팅창 변수
 	
 	//네트워크를 위한 자원 변수
-	
 	private Socket socket;
 	private String ip;	//1번은 자기 자신
 	private int port;
@@ -59,7 +59,6 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 	private OutputStream os;
 	private DataInputStream dis;
 	private DataOutputStream dos;
-	
 	
 	//그외 변수 들
 	Vector user_list = new Vector();
@@ -82,12 +81,13 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		joinroom_button.addActionListener(this);	//채팅방 참여 버튼 리스터
 		createroom_button.addActionListener(this);	//채팅방 만들기 버튼 리스터
 		send_button.addActionListener(this);		//채팅 전송 버튼 리스터
-		message_tf.addKeyListener(this);
+		message_tf.addKeyListener(this);			//
+		out_button.addActionListener(this); 		//퇴장 버튼 리스터
 	}
 	
 	private void Main_init() { //client 화면구성
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 586, 525);
+		setBounds(100, 100, 654, 525);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -98,11 +98,11 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		contentPane.add(lblNewLabel);
 		
 
-		User_list.setBounds(12, 29, 104, 163);
+		User_list.setBounds(12, 29, 114, 163);
 		contentPane.add(User_list);
 		//User_list.setListData(user_list);
 
-		notesend_button.setBounds(12, 202, 104, 23);
+		notesend_button.setBounds(12, 202, 114, 23);
 		contentPane.add(notesend_button);
 		
 		JLabel lblNewLabel_1 = new JLabel("채 팅 방 목 록");
@@ -110,20 +110,20 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		contentPane.add(lblNewLabel_1);
 		
 
-		Room_list.setBounds(12, 254, 104, 163);
+		Room_list.setBounds(12, 254, 114, 163);
 		contentPane.add(Room_list);
 		//Room_list.setListData(room_list);
 		
 		
-		joinroom_button.setBounds(12, 425, 104, 23);
+		joinroom_button.setBounds(12, 425, 114, 23);
 		contentPane.add(joinroom_button);
 		
 		
-		createroom_button.setBounds(12, 455, 104, 23);
+		createroom_button.setBounds(12, 455, 114, 23);
 		contentPane.add(createroom_button);
 		
 		message_tf = new JTextField();
-		message_tf.setBounds(120, 456, 369, 22);
+		message_tf.setBounds(138, 456, 351, 22);
 		contentPane.add(message_tf);
 		message_tf.setColumns(10);
 		message_tf.setEnabled(false);
@@ -133,12 +133,15 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		contentPane.add(send_button);
 		send_button.setEnabled(false);
 		
+		out_button.setBounds(563, 455, 65, 23);
+		contentPane.add(out_button);
+		out_button.setEnabled(false);
+		
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(120, 8, 440, 432);
+		scrollPane.setBounds(139, 8, 490, 440);
 		contentPane.add(scrollPane);
 		
-
 		scrollPane.setViewportView(Chat_area);
 		Chat_area.setEnabled(false);
 		
@@ -305,6 +308,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 			createroom_button.setEnabled(false);
 			message_tf.setEnabled(true);
 			send_button.setEnabled(true);
+			out_button.setEnabled(true);
 			My_Room = Message;
 		}
 		else if(protocol.contentEquals("CreateRoomFail")) {	//방을 못만들었을 때
@@ -327,6 +331,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		else if(protocol.contentEquals("JoinRoom")) {
 			message_tf.setEnabled(true);
 			send_button.setEnabled(true);
+			out_button.setEnabled(true);
 			joinroom_button.setEnabled(false);
 			createroom_button.setEnabled(false);
 			My_Room =Message;
@@ -337,6 +342,19 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 				user_list.remove(Message);
 				User_list.setListData(user_list);
 			}
+		else if(protocol.contentEquals("Room_out")) {
+			room_list.remove(Message);
+			Room_list.setListData(room_list);
+		}
+		else if(protocol.contentEquals("OutRoom")) {
+			message_tf.setEnabled(false);
+			send_button.setEnabled(false);
+			out_button.setEnabled(false);
+			joinroom_button.setEnabled(true);
+			createroom_button.setEnabled(true);
+			JOptionPane.showMessageDialog
+			(null, "채팅방에 퇴장했습니다.","알림",JOptionPane.INFORMATION_MESSAGE);
+		}
 		
 	}
 	
@@ -381,7 +399,6 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 			Network(); 
 			}
 			
-			
 		}
 		else if(e.getSource()==notesend_button) {
 			System.out.println("쪽지 보내기 버튼 클릭");
@@ -411,14 +428,19 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 			System.out.println("채팅 방만들기 버튼 클릭");
 		}
 		else if(e.getSource()==send_button) {
-			
+
 			send_message("Chatting/" + My_Room+"/" + message_tf.getText().trim());
 			message_tf.setText("");
 			message_tf.requestFocus();
 			
 			System.out.println("채팅 전송 버튼 클릭");
+			
 		}
-		
+		else if(e.getSource()==out_button) {
+			send_message("OutRoom/"+ My_Room);
+			System.out.println(My_Room);
+			System.out.println("퇴장 버튼");
+		}
 		
 		
 	}

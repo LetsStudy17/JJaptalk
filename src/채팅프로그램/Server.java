@@ -304,6 +304,7 @@ public class Server extends JFrame implements ActionListener {
 			}	//else if문 끝
 			
 			else if(protocol.contentEquals("Chatting")) {
+				if(st.hasMoreTokens()) {
 				String msg = st.nextToken();
 				
 				for(int i =0; i< room_vc.size(); i++) {
@@ -312,6 +313,16 @@ public class Server extends JFrame implements ActionListener {
 				if(r.Room_name.contentEquals(message)) {
 					r.BroadCast_Room("Chatting/"+Nickname+"/"+msg);
 				}
+				}}
+				else {
+					for(int i =0; i< room_vc.size(); i++) {
+					Roominfo r = (Roominfo)room_vc.elementAt(i);
+							
+				if(r.Room_name.contentEquals(message)) {
+					r.BroadCast_Room("Chatting/"+Nickname+"/---");
+				}
+				}
+					
 				}
 			}	//else if문 끝
 			else if(protocol.contentEquals("JoinRoom")) {
@@ -328,6 +339,25 @@ public class Server extends JFrame implements ActionListener {
 					}
 				}
 			}
+			else if(protocol.contentEquals("OutRoom")) {
+				for(int i =0; i<room_vc.size();i++) {
+					Roominfo r = (Roominfo)room_vc.elementAt(i);
+					if(r.Room_name.contentEquals(message)) {
+						r.Out_User(this);
+						r.BroadCast_Room("Chatting/알림/****"+Nickname+"님이 퇴장하셨습니다****");
+						if(r.Room_user_vc.size()==0) {
+							room_vc.remove(message);	//룸 백터 자신거를 없앤다.
+							BroadCast("Room_out/"+r.Room_name);
+							//룸 리시트에서 이름을 없앤ㄴ 코드
+						}
+						else {
+							send_Message("OutRoom/"+message);
+							//방에 참여한는거 반대로 하면된다.}
+					}
+				}
+				}
+				}
+			
 			
 		}
 		
@@ -366,6 +396,9 @@ public class Server extends JFrame implements ActionListener {
 		}
 		private void Add_User(UserInfo u) {
 			this.Room_user_vc.add(u);
+		}
+		private void Out_User(UserInfo u) {
+			this.Room_user_vc.remove(u);
 		}
 		
 	}	//Roominfo 끝
