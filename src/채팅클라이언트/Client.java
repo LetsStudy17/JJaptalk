@@ -244,6 +244,8 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 					try {
 					String msg=dis.readUTF(); // 메시지 수신
 					
+					Chat_area.setCaretPosition(Chat_area.getDocument().getLength()); //커서를 최하단으로 보낸다
+					
 					System.out.println("서버로부터 수신된 메세지 : "+msg);
 					
 					inmessage(msg);
@@ -345,6 +347,13 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		else if(protocol.contentEquals("Room_out")) {
 			room_list.remove(Message);
 			Room_list.setListData(room_list);
+			message_tf.setEnabled(false);
+			send_button.setEnabled(false);
+			out_button.setEnabled(false);
+			joinroom_button.setEnabled(true);
+			createroom_button.setEnabled(true);
+			JOptionPane.showMessageDialog
+			(null, "채팅방에 퇴장했습니다.","알림",JOptionPane.INFORMATION_MESSAGE);
 		}
 		else if(protocol.contentEquals("OutRoom")) {
 			message_tf.setEnabled(false);
@@ -362,6 +371,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		
 		try {
 			dos.writeUTF(str);	//사용자가 서버한테 메시지를 보내는 부분
+			Chat_area.setCaretPosition(Chat_area.getDocument().getLength()); //커서를 최하단으로 보낸다
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

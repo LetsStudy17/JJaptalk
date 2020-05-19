@@ -248,6 +248,17 @@ public class Server extends JFrame implements ActionListener {
 					user_socket.close();
 					user_vc.remove(this);
 					BroadCast("User_out/"+Nickname);
+				
+						for(int i = 0; i<room_vc.size(); i++) {						//프로그램 종료시 room벡터 삭제 코드
+							Roominfo r =(Roominfo)room_vc.elementAt(i);
+							for(int j=0;j<r.Room_user_vc.size();j++ ) {
+								UserInfo u =(UserInfo)r.Room_user_vc.elementAt(j);
+								if(u.Nickname==this.Nickname) {
+									InMessage("OutRoom/"+r.Room_name);
+								}
+							}
+						}//프로그램 종료시 room 벡터 삭제코드 끝
+					
 					}
 					catch(IOException e1) {}
 					break;
@@ -346,9 +357,10 @@ public class Server extends JFrame implements ActionListener {
 						r.Out_User(this);
 						r.BroadCast_Room("Chatting/알림/****"+Nickname+"님이 퇴장하셨습니다****");
 						if(r.Room_user_vc.size()==0) {
-							room_vc.remove(message);	//룸 백터 자신거를 없앤다.
 							BroadCast("Room_out/"+r.Room_name);
 							//룸 리시트에서 이름을 없앤ㄴ 코드
+							room_vc.remove(r);	//룸 백터 자신거를 없앤다.
+							
 						}
 						else {
 							send_Message("OutRoom/"+message);
@@ -356,7 +368,7 @@ public class Server extends JFrame implements ActionListener {
 					}
 				}
 				}
-				}
+				}//else if문 끝(OutRoom)
 			
 			
 		}
@@ -386,8 +398,9 @@ public class Server extends JFrame implements ActionListener {
 		Roominfo(String str, UserInfo u){
 			this.Room_name = str;
 			this.Room_user_vc.add(u);
-			
 		}
+		
+		
 		public void BroadCast_Room(String str){	//현재 방의 모든 사람에게 알린다.
 			for(int i = 0; i<Room_user_vc.size();i++) {
 				UserInfo u = (UserInfo)Room_user_vc.elementAt(i);
