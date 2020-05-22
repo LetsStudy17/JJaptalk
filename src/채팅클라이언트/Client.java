@@ -347,11 +347,14 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		else if(protocol.contentEquals("Room_out")) {
 			room_list.remove(Message);
 			Room_list.setListData(room_list);
+		}
+		else if(protocol.contentEquals("Room_out_setting")) {
 			message_tf.setEnabled(false);
 			send_button.setEnabled(false);
 			out_button.setEnabled(false);
 			joinroom_button.setEnabled(true);
 			createroom_button.setEnabled(true);
+			Chat_area.setText("");
 			JOptionPane.showMessageDialog
 			(null, "채팅방에 퇴장했습니다.","알림",JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -361,6 +364,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 			out_button.setEnabled(false);
 			joinroom_button.setEnabled(true);
 			createroom_button.setEnabled(true);
+			Chat_area.setText("");
 			JOptionPane.showMessageDialog
 			(null, "채팅방에 퇴장했습니다.","알림",JOptionPane.INFORMATION_MESSAGE);
 		}

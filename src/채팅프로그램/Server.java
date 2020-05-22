@@ -358,9 +358,9 @@ public class Server extends JFrame implements ActionListener {
 						r.BroadCast_Room("Chatting/알림/****"+Nickname+"님이 퇴장하셨습니다****");
 						if(r.Room_user_vc.size()==0) {
 							BroadCast("Room_out/"+r.Room_name);
+							send_Message("Room_out_setting/"+r.Room_name);
 							//룸 리시트에서 이름을 없앤ㄴ 코드
 							room_vc.remove(r);	//룸 백터 자신거를 없앤다.
-							
 						}
 						else {
 							send_Message("OutRoom/"+message);
