@@ -47,6 +47,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 	
 	private JList User_list = new JList();	//전체 접속자 list
 	private JList Room_list = new JList();	//전체 방 목록 list
+	private JList Join_room = new JList();
 	
 	private JTextArea Chat_area = new JTextArea();	//채팅창 변수
 	
@@ -63,6 +64,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 	//그외 변수 들
 	Vector user_list = new Vector();
 	Vector room_list = new Vector();
+	Vector join_room = new Vector();
 	StringTokenizer st;
 	
 	private String My_Room;	//내가 있는 방이름
@@ -110,7 +112,7 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		contentPane.add(lblNewLabel_1);
 		
 
-		Room_list.setBounds(12, 254, 114, 163);
+		Room_list.setBounds(12, 252, 114, 131);
 		contentPane.add(Room_list);
 		//Room_list.setListData(room_list);
 		
@@ -144,6 +146,10 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 		
 		scrollPane.setViewportView(Chat_area);
 		Chat_area.setEnabled(false);
+		
+		
+		Join_room.setBounds(12, 396, 114, 19);
+		contentPane.add(Join_room);
 		
 		this.setVisible(false);	//true경우 화면 보이게, false경우 화면 안보이게
 		
@@ -312,6 +318,8 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 			send_button.setEnabled(true);
 			out_button.setEnabled(true);
 			My_Room = Message;
+			join_room.add("현재방 :  "+ Message);
+			Join_room.setListData(join_room);
 		}
 		else if(protocol.contentEquals("CreateRoomFail")) {	//방을 못만들었을 때
 			JOptionPane.showMessageDialog
@@ -339,6 +347,8 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 			My_Room =Message;
 			JOptionPane.showMessageDialog
 			(null, "채팅방에 입장했습니다.","알림",JOptionPane.INFORMATION_MESSAGE);
+			join_room.add("현재방 :  "+ Message);
+			Join_room.setListData(join_room);
 		}
 		else if(protocol.contentEquals("User_out")){
 				user_list.remove(Message);
@@ -357,6 +367,8 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 			Chat_area.setText("");
 			JOptionPane.showMessageDialog
 			(null, "채팅방에 퇴장했습니다.","알림",JOptionPane.INFORMATION_MESSAGE);
+			join_room.remove("현재방 :  "+ Message);
+			Join_room.setListData(join_room);
 		}
 		else if(protocol.contentEquals("OutRoom")) {
 			message_tf.setEnabled(false);
@@ -367,6 +379,8 @@ public class Client extends JFrame implements ActionListener, KeyListener {
 			Chat_area.setText("");
 			JOptionPane.showMessageDialog
 			(null, "채팅방에 퇴장했습니다.","알림",JOptionPane.INFORMATION_MESSAGE);
+			join_room.remove("현재방 :  "+ Message);
+			Join_room.setListData(join_room);
 		}
 		
 	}
